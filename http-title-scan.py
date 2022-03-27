@@ -44,7 +44,6 @@ def args_parse():
     parser.add_argument('-d', '--loglevel', type=str, help="Debug Level Setup.", default='INFO', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG'])
     parser.add_argument('-o', '--outputfile', type=argparse.FileType('a', encoding="utf-8"), help="Output file name with path", default="http_identified_titles.txt")
     parser.add_argument('-l', '--logfile', help='log to file', dest='logfile', default=None)  
-    parser.set_defaults(type='p')
 
     args = parser.parse_args()
     return args
@@ -115,7 +114,7 @@ def get_args(args):
     if args.ipfile:
         with args.ipfile as file:
             lines = file.readlines()
-            ip_range = [str(ip).strip() for ip in lines]
+            ip_range = [str(ip).strip() for ip in lines if str(ip).strip() != ""]
             dargs['ips'] = ip_range
 
             logger.info(f'Sucessfully fetched IP Addresses from file')
@@ -130,7 +129,7 @@ def get_args(args):
     if args.portsfile:
         with args.portsfile as file:
             lines = file.readlines()
-            port_range = [str(ip).strip() for ip in lines]
+            port_range = [str(port).strip() for port in lines if str(port).strip() != ""]
             dargs['ports'] = port_range
 
             logger.debug(f'IP Ranges Identfied {ip_range}')
