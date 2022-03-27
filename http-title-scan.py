@@ -40,7 +40,7 @@ def args_parse():
     parser.add_argument('-p', '--ports', nargs='+', type=int, help='Ports for web service. All ports will be scanned for each IP. Space seperated' , default=['80'])
     parser.add_argument('-t', '--threads', type=int , help='Number of concurrent scans of IP addresses', default=10)
     parser.add_argument('-d', '--loglevel', type=str, help="Debug Level Setup.", default='INFO', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG'])
-    parser.add_argument('-o', '--outputfile', type=argparse.FileType('a'), help="Output file name with path", default="http_identified_titles.txt")
+    parser.add_argument('-o', '--outputfile', type=argparse.FileType('a', encoding="utf-8"), help="Output file name with path", default="http_identified_titles.txt")
     parser.add_argument('-l', '--logfile', help='log to file', dest='logfile', default=None)  
 
     args = parser.parse_args()
@@ -169,6 +169,7 @@ def scan():
         except:
             break
         try:
+            requests.packages.urllib3.disable_warnings()
             r = requests.get(url, timeout=30, headers=headers, verify=False, allow_redirects=True)
             status_code = r.status_code
             response_url = r.url
@@ -184,8 +185,11 @@ def scan():
                     server = r.headers[header]
                 if "X-Powered-By" == header:
                     language = r.headers[header]
-            file_queue.put(url + "\t" + str(status_code) + "\t" + title)
-            logger.info(url+"\t" + str(status_code) + "\t" + f"{title}\t" + f"{server}\t" + f"{language}\t")
+            if str(status_code).startswith('20'):
+                file_queue.put(url + "\t" + str(status_code) + "\t" + title)
+                logger.info(url+"\t" + str(status_code) + "\t" + f"{title}\t" + f"{server}\t" + f"{language}\t")
+            else:
+                logger.warning(url+"\t" + str(status_code) + "\t" + f"{title}\t" + f"{server}\t" + f"{language}\t")
         except:
             logger.error(f"Request handling failed against {url}")
         finally:
