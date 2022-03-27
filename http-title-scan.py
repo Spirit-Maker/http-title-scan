@@ -37,7 +37,9 @@ def args_parse():
     ip_group = parser.add_mutually_exclusive_group(required=True)
     ip_group.add_argument('-ip', '--ipaddresses', type=str,help='IP address or IP range in format (x.x.x.x-x.x.x.x or x.x.x.x/24). Subnet is multile of 8')
     ip_group.add_argument('-f', '--ipfile', type=argparse.FileType('r'), help='Filename with path of IP addresses/ domains.')
-    parser.add_argument('-p', '--ports', nargs='+', type=int, help='Ports for web service. All ports will be scanned for each IP. Space seperated' , default=['80'])
+    port_group = parser.add_mutually_exclusive_group(required=True)
+    port_group.add_argument('-p', '--ports', nargs='+', type=int, help='Ports for web service. All ports will be scanned for each IP. Space seperated' , default=['80'])
+    port_group.add_argument('-pf','--portsfile', type=argparse.FileType('r'), help='Ports File for web service. All ports will be scanned for each IP. Line seperated' , default=None)
     parser.add_argument('-t', '--threads', type=int , help='Number of concurrent scans of IP addresses', default=10)
     parser.add_argument('-d', '--loglevel', type=str, help="Debug Level Setup.", default='INFO', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG'])
     parser.add_argument('-o', '--outputfile', type=argparse.FileType('a', encoding="utf-8"), help="Output file name with path", default="http_identified_titles.txt")
@@ -120,6 +122,17 @@ def get_args(args):
 
     if args.ports:
         dargs['ports'] = args.ports
+
+        logger.debug(f'IP Ranges Identfied {ip_range}')
+        
+    
+    if args.portsfile:
+        with args.portsfile as file:
+            lines = file.readlines()
+            port_range = [str(ip).strip() for ip in lines]
+            dargs['ports'] = port_range
+
+            logger.debug(f'IP Ranges Identfied {ip_range}')
     
     if args.threads:
         if args.threads > 40  or args.threads < 1:
