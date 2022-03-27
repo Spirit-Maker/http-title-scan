@@ -8,5 +8,5 @@ Connects to the ports via http or https (only if port has 443 in it) extracts ti
 ### Logs
 Logging module is used for logging errors/ warnings/ information etc. Default value is info. To store logs provide logfile parameter.
 
-##Warning
+## Warning
 For Windows signal handler is not working at the moment.
