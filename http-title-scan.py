@@ -9,6 +9,7 @@ import logging
 import argparse
 import ipaddress
 import sys
+import coloredlogs
 from time import sleep
 from pyfiglet import Figlet
 
@@ -76,6 +77,8 @@ def get_args(args):
             file_handler.setLevel(level=loglevel)
             file_handler.setFormatter(file_formatter)
             logger.addHandler(file_handler)
+
+        coloredlogs.install(logger=logger)
             
     
     if args.ipaddresses:
