@@ -44,6 +44,7 @@ def args_parse():
     parser.add_argument('-d', '--loglevel', type=str, help="Debug Level Setup.", default='INFO', choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG'])
     parser.add_argument('-o', '--outputfile', type=argparse.FileType('a', encoding="utf-8"), help="Output file name with path", default="http_identified_titles.txt")
     parser.add_argument('-l', '--logfile', help='log to file', dest='logfile', default=None)  
+    parser.set_defaults(type='p')
 
     args = parser.parse_args()
     return args
